@@ -27,5 +27,8 @@ namespace University.Models.Entities
         
         //Navigation property
         public Adress Adress { get; set; }
+
+        //Many to many
+        public ICollection<Course> Courses { get; set; }
     }
 }

@@ -12,5 +12,8 @@ namespace University.Models.Entities
 
         //Nav prop
         public ICollection<Enrollment> Enrollments { get; set; }
+
+        //N:M
+        public ICollection<Student> Students { get; set; }
     }
 }
