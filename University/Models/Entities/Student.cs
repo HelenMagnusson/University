@@ -13,5 +13,9 @@ namespace University.Models.Entities
         public string LastName { get; set; }
         public string Email { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+
+        //Navigation property
+        //Nr 2 StudentId skapas som nullable
+        public ICollection<Enrollment> Enrollments { get; set; }
     }
 }
