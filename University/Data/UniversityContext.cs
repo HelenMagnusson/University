@@ -26,6 +26,7 @@ namespace University.Data
         {
             base.OnModelCreating(modelBuilder);
 
+           //modelBuilder.Entity<Enrollment>().HasKey(x => new { x.StudentId, x.CourseId })
 
             //Fluent api
             //modelBuilder.Entity<Student>()
