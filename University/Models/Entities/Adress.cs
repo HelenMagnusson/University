@@ -11,5 +11,11 @@ namespace University.Models.Entities
         public string Street { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
+
+        //FK Not null
+        public int StudentId { get; set; }
+
+        //Navigationproperty
+        public Student Student { get; set; }
     }
 }
