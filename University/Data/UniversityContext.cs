@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using University.Models.Entities;
+using University.Models.ViewModels.Students;
 
 namespace University.Data
 {
@@ -34,6 +35,5 @@ namespace University.Data
             //            .WithOne(e => e.Student)
             //            .HasForeignKey(e => e.StudentId);
         }
-
     }
 }

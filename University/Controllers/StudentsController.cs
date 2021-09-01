@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Models.Entities;
+using University.Models.ViewModels.Students;
 
 namespace University.Controllers
 {
@@ -22,7 +23,19 @@ namespace University.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Student.Include(s => s.Courses).ToListAsync());
+            var model = _context.Student.Include(s => s.Adress)
+                                        .Select(s => new StudentsIndexViewModel
+                                        {
+                                            Id = s.Id,
+                                            Avatar = s.Avatar,
+                                            Fullname = s.FullName,
+                                            Street = s.Adress.Street
+                                        })
+                                        .OrderBy(m => m.Street)
+                                        .Take(10);
+
+
+            return View(await model.ToListAsync());
         }
 
         // GET: Students/Details/5
