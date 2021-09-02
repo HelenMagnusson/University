@@ -18,10 +18,10 @@ namespace University.Data
             CreateMap<Student, StudentsDetailsViewModel>()
                 .ForMember(
                         dest => dest.Attending,
-                        from => from.MapFrom(s => s.Enrollments.Count))
-                .ForMember(
-                        dest => dest.Courses,
-                        from => from.MapFrom(s => s.Enrollments.Select(e => e.Course).ToList()));
+                        from => from.MapFrom(s => s.Enrollments.Count));
+                //.ForMember(
+                //        dest => dest.Courses,
+                //        from => from.MapFrom(s => s.Enrollments.Select(e => e.Course).ToList()));
         }
     }
 }
