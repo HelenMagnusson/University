@@ -43,5 +43,7 @@ namespace University.Data
             //            .HasForeignKey(e => e.StudentId);
         }
 
+        public DbSet<University.Models.Entities.Course> Course { get; set; }
+
     }
 }
