@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +15,18 @@ namespace University.Controllers
     public class StudentsController : Controller
     {
         private readonly UniversityContext _context;
+        private readonly Faker faker;
 
         public StudentsController(UniversityContext context)
         {
             _context = context;
+            faker = new Faker();
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            var model = _context.Student.Include(s => s.Adress)
+            var model = _context.Student    //.Include(s => s.Adress)
                                         .Select(s => new StudentsIndexViewModel
                                         {
                                             Id = s.Id,
@@ -67,15 +70,29 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Avatar,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var student = new Student
+                {
+                    Avatar = faker.Internet.Avatar(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Adress = new Adress
+                    {
+                        Street = model.Street,
+                        City = model.City,
+                        ZipCode = model.ZipCode
+                    }
+                };
+
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(model);
         }
 
         // GET: Students/Edit/5

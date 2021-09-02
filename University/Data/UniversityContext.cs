@@ -27,7 +27,7 @@ namespace University.Data
         {
             base.OnModelCreating(modelBuilder);
 
-           //modelBuilder.Entity<Enrollment>().HasKey(x => new { x.StudentId, x.CourseId })
+            //modelBuilder.Entity<Enrollment>().HasKey(x => new { x.StudentId, x.CourseId })
 
             //Fluent api
             //modelBuilder.Entity<Student>()
@@ -35,5 +35,6 @@ namespace University.Data
             //            .WithOne(e => e.Student)
             //            .HasForeignKey(e => e.StudentId);
         }
+
     }
 }
