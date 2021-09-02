@@ -10,6 +10,7 @@ namespace University.Models.ViewModels.Students
     {
         public string FirstName { get; set; }
 
+        [CheckName]
         public string LastName { get; set; }
 
         public string Email { get; set; }
