@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +27,11 @@ namespace University.Controllers
         }
 
         // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details([Range(1,5)] int? id)
         {
+
+            if (!ModelState.IsValid) return BadRequest();
+
             if (id == null)
             {
                 return NotFound();
