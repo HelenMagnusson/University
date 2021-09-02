@@ -13,8 +13,8 @@ namespace University.Models.ViewModels.Students
 
         public string Email { get; set; }
 
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string ZipCode { get; set; }
+        public string AdressStreet { get; set; }
+        public string AdressCity { get; set; }
+        public string AdressZipCode { get; set; }
     }
 }

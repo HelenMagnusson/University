@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,28 +15,34 @@ namespace University.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly UniversityContext _context;
+        private readonly UniversityContext db;
+        private readonly IMapper mapper;
         private readonly Faker faker;
 
-        public StudentsController(UniversityContext context)
+        public StudentsController(UniversityContext context, IMapper mapper)
         {
-            _context = context;
+            db = context;
+            this.mapper = mapper;
             faker = new Faker();
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            var model = _context.Student    //.Include(s => s.Adress)
-                                        .Select(s => new StudentsIndexViewModel
-                                        {
-                                            Id = s.Id,
-                                            Avatar = s.Avatar,
-                                            Fullname = s.FullName,
-                                            Street = s.Adress.Street
-                                        })
-                                        .OrderBy(m => m.Street)
-                                        .Take(10);
+            //var model = _context.Student    //.Include(s => s.Adress)
+            //                            .Select(s => new StudentsIndexViewModel
+            //                            {
+            //                                Id = s.Id,
+            //                                Avatar = s.Avatar,
+            //                                Fullname = s.FullName,
+            //                                AdressStreet = s.Adress.Street
+            //                            })
+            //                            .OrderBy(m => m.AdressStreet)
+            //                            .Take(10);
+
+            var model = mapper.ProjectTo<StudentsIndexViewModel>(db.Student)
+                              .OrderBy(m => m.AdressStreet)
+                              .Take(10);
 
 
             return View(await model.ToListAsync());
@@ -49,7 +56,7 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student
+            var student = await db.Student
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -74,22 +81,26 @@ namespace University.Controllers
         {
             if (ModelState.IsValid)
             {
-                var student = new Student
-                {
-                    Avatar = faker.Internet.Avatar(),
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    Adress = new Adress
-                    {
-                        Street = model.Street,
-                        City = model.City,
-                        ZipCode = model.ZipCode
-                    }
-                };
+                //var student = new Student
+                //{
+                //    Avatar = faker.Internet.Avatar(),
+                //    FirstName = model.FirstName,
+                //    LastName = model.LastName,
+                //    Email = model.Email,
+                //    Adress = new Adress
+                //    {
+                //        Street = model.Street,
+                //        City = model.City,
+                //        ZipCode = model.ZipCode
+                //    }
+                //};
 
-                _context.Add(student);
-                await _context.SaveChangesAsync();
+                var student = mapper.Map<Student>(model);
+                student.Avatar = faker.Internet.Avatar();
+
+                db.Add(student);
+                await db.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -103,7 +114,7 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student.FindAsync(id);
+            var student = await db.Student.FindAsync(id);
             if (student == null)
             {
                 return NotFound();
@@ -127,8 +138,8 @@ namespace University.Controllers
             {
                 try
                 {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
+                    db.Update(student);
+                    await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -154,7 +165,7 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student
+            var student = await db.Student
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -169,15 +180,15 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Student.FindAsync(id);
-            _context.Student.Remove(student);
-            await _context.SaveChangesAsync();
+            var student = await db.Student.FindAsync(id);
+            db.Student.Remove(student);
+            await db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool StudentExists(int id)
         {
-            return _context.Student.Any(e => e.Id == id);
+            return db.Student.Any(e => e.Id == id);
         }
     }
 }
