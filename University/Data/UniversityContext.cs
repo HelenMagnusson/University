@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace University.Data
     public class UniversityContext : DbContext
     {
         public DbSet<Student> Student { get; set; }
+        public DbSet<University.Models.Entities.Course> Course { get; set; }
         public UniversityContext (DbContextOptions<UniversityContext> options)
             : base(options)
         {
@@ -26,6 +28,13 @@ namespace University.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Student>().Property<DateTime>("Edited");
+
+            //foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    entity.AddProperty("Edited", typeof(DateTime));
+            //}
 
             modelBuilder.Entity<Student>()
                         .HasMany(s => s.Courses)
@@ -43,7 +52,31 @@ namespace University.Data
             //            .HasForeignKey(e => e.StudentId);
         }
 
-        public DbSet<University.Models.Entities.Course> Course { get; set; }
 
+        //public override int SaveChanges()
+        //{
+        //    ChangeTracker.DetectChanges();
+
+        //    foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
+        //    {
+        //        entry.Property("Edited").CurrentValue = DateTime.Now;
+        //    }
+
+        //    return base.SaveChanges();
+        //}
+
+      
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+
+            ChangeTracker.DetectChanges();
+
+            foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
+            {
+                entry.Property("Edited").CurrentValue = DateTime.Now;
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

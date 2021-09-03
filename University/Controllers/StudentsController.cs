@@ -15,6 +15,7 @@ using University.Models.ViewModels.Students;
 namespace University.Controllers
 {
     //[ModelIsValid]
+    [NullRefferenseFilter]
     public class StudentsController : Controller
     {
         private readonly UniversityContext db;
@@ -31,6 +32,11 @@ namespace University.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
+
+            var m = db.Student.Where(s => EF.Property<DateTime>(s, "Edited") >= DateTime.Now.AddDays(-1));
+
+            //Student student = null;
+            //var avatar = student.Avatar;
             //var model = _context.Student    //.Include(s => s.Adress)
             //                            .Select(s => new StudentsIndexViewModel
             //                            {
@@ -42,7 +48,7 @@ namespace University.Controllers
             //                            .OrderBy(m => m.AdressStreet)
             //                            .Take(10);
 
-            var model = mapper.ProjectTo<StudentsIndexViewModel>(db.Student)
+            var model = mapper.ProjectTo<StudentsIndexViewModel>(m)
                               .OrderBy(m => m.AdressStreet)
                               .Take(10);
 
@@ -139,6 +145,7 @@ namespace University.Controllers
             {
                 try
                 {
+                   // db.Entry(student).Property("Edited").CurrentValue = DateTime.Now;
                     db.Update(student);
                     await db.SaveChangesAsync();
                 }

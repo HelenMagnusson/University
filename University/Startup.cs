@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Filters;
+using University.Middelware;
 
 namespace University
 {
@@ -53,6 +54,9 @@ namespace University
             app.UseRouting();
 
             app.UseAuthorization();
+
+           //app.UseDemoMiddleware();
+           
 
             app.UseEndpoints(endpoints =>
             {
