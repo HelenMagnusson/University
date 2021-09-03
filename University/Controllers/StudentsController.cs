@@ -51,12 +51,11 @@ namespace University.Controllers
         }
 
         // GET: Students/Details/5
+        [RequiredParam("id")]
+        [ModelNotNull]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+              
 
             //var student = await db.Student
             //    .FirstOrDefaultAsync(m => m.Id == id);
@@ -64,10 +63,7 @@ namespace University.Controllers
             var student = await mapper.ProjectTo<StudentsDetailsViewModel>(db.Student)
                                       .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (student == null)
-            {
-                return NotFound();
-            }
+            //student = null;
 
             return View(student);
         }
