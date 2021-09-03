@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using University.Filters;
 
 namespace University
 {
@@ -25,7 +26,7 @@ namespace University
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews();   //opt => opt.Filters.Add(typeof(ModelIsValid)));
 
             services.AddDbContext<UniversityContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("UniversityContext")));

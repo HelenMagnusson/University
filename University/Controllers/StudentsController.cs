@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using University.Filters;
 using University.Models.Entities;
 using University.Models.ViewModels.Students;
 
 namespace University.Controllers
 {
+    //[ModelIsValid]
     public class StudentsController : Controller
     {
         private readonly UniversityContext db;
@@ -81,10 +83,10 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ModelIsValid]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
-            if (ModelState.IsValid)
-            {
+          
                 //var student = new Student
                 //{
                 //    Avatar = faker.Internet.Avatar(),
@@ -106,8 +108,7 @@ namespace University.Controllers
                 await db.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
-            }
-            return View(model);
+            
         }
 
         // GET: Students/Edit/5
