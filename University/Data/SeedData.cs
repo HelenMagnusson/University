@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -19,10 +20,19 @@ namespace University.Data
             {
                 if (await db.Student.AnyAsync()) return;
 
+                const string passWord = "bytmig";
+                var userManager = services.GetRequiredService<UserManager<Student>>();
+
                 fake = new Faker("sv");
 
                 var students = GetStudents();
-                await db.AddRangeAsync(students);
+                //await db.AddRangeAsync(students);
+
+                foreach (var student in students)
+                {
+                   var result =   await userManager.CreateAsync(student, passWord);
+                    if (!result.Succeeded) throw new Exception(String.Join("\n", result.Errors));
+                }
 
                 var courses = GetCourses();
                 await db.AddRangeAsync(courses);
@@ -83,12 +93,13 @@ namespace University.Data
             {
                 var fName = fake.Name.FirstName();
                 var lName = fake.Name.LastName();
-
+                var email = fake.Internet.Email($"{fName} {lName}");
                 var student = new Student
                 {
                     FirstName = fName,
                     LastName = lName,
-                    Email = fake.Internet.Email($"{fName} {lName}"),
+                    Email = email,
+                    UserName = email,
                     Avatar = fake.Internet.Avatar(),
                     Adress = new Adress
                     {
