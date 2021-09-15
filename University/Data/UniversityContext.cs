@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using University.Models.ViewModels.Students;
 
 namespace University.Data
 {
-    public class UniversityContext : IdentityDbContext
+    public class UniversityContext : IdentityDbContext<Student , IdentityRole<int>, int>
     {
         public DbSet<Student> Student { get; set; }
         public DbSet<University.Models.Entities.Course> Course { get; set; }

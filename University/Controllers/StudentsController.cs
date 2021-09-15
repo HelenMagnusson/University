@@ -33,7 +33,7 @@ namespace University.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var m = db.Student.Where(s => EF.Property<DateTime>(s, "Edited") >= DateTime.Now.AddDays(-1));
+            //var m = db.Student.Where(s => EF.Property<DateTime>(s, "Edited") >= DateTime.Now.AddDays(-1));
 
             //Student student = null;
             //var avatar = student.Avatar;
@@ -48,7 +48,7 @@ namespace University.Controllers
             //                            .OrderBy(m => m.AdressStreet)
             //                            .Take(10);
 
-            var model = mapper.ProjectTo<StudentsIndexViewModel>(m)
+            var model = mapper.ProjectTo<StudentsIndexViewModel>(db.Student)
                               .OrderBy(m => m.AdressStreet)
                               .Take(10);
 

@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Filters;
 using University.Middelware;
+using Microsoft.AspNetCore.Identity;
+using University.Models.Entities;
 
 namespace University
 {
@@ -31,6 +33,17 @@ namespace University
 
             services.AddDbContext<UniversityContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("UniversityContext")));
+
+            services.AddDefaultIdentity<Student>(opt =>
+            {
+                opt.SignIn.RequireConfirmedAccount = false;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 2;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+            })
+                   .AddEntityFrameworkStores<UniversityContext>();
+
 
             services.AddAutoMapper(typeof(Startup));
         }
@@ -53,16 +66,19 @@ namespace University
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
-           //app.UseDemoMiddleware();
-           
+            //app.UseDemoMiddleware();
+
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Students}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
