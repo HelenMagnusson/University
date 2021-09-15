@@ -46,6 +46,13 @@ namespace University.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Street { get; set; }
+            public string City { get; set; }
+            public string ZipCode { get; set; }
+            public string Avatar { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]

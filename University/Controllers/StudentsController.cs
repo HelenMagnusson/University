@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bogus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,14 @@ namespace University.Controllers
     {
         private readonly UniversityContext db;
         private readonly IMapper mapper;
+        private readonly UserManager<Student> userManager;
         private readonly Faker faker;
 
-        public StudentsController(UniversityContext context, IMapper mapper)
+        public StudentsController(UniversityContext context, IMapper mapper, UserManager<Student> userManager) 
         {
             db = context;
             this.mapper = mapper;
+            this.userManager = userManager;
             faker = new Faker();
         }
 
@@ -105,9 +108,12 @@ namespace University.Controllers
 
                 var student = mapper.Map<Student>(model);
                 student.Avatar = faker.Internet.Avatar();
+                student.UserName = model.Email;
 
-                db.Add(student);
-                await db.SaveChangesAsync();
+                await userManager.CreateAsync(student, "bytmig");
+
+                //db.Add(student);
+                //await db.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             
