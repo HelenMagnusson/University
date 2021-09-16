@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +18,8 @@ namespace University.Controllers
 {
     //[ModelIsValid]
     [NullRefferenseFilter]
+   // [Authorize(Roles = "Student")]
+    [Authorize]
     public class StudentsController : Controller
     {
         private readonly UniversityContext db;
@@ -33,6 +36,7 @@ namespace University.Controllers
         }
 
         // GET: Students
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
 
@@ -52,7 +56,7 @@ namespace University.Controllers
             //                            .Take(10);
 
             var model = mapper.ProjectTo<StudentsIndexViewModel>(db.Student)
-                              .OrderBy(m => m.AdressStreet)
+                              .OrderByDescending(m => m.Id)
                               .Take(10);
 
 
@@ -64,7 +68,19 @@ namespace University.Controllers
         [ModelNotNull]
         public async Task<IActionResult> Details(int? id)
         {
-              
+            var userId = userManager.GetUserId(User);
+
+            if(id.ToString() != userId)
+            {
+                return LocalRedirect("/Identity/Account/Login");
+            }
+
+            //var user2 = await userManager.GetUserAsync(User);
+
+            //if (User.Identity.IsAuthenticated)
+            //{
+
+            //}
 
             //var student = await db.Student
             //    .FirstOrDefaultAsync(m => m.Id == id);

@@ -21,7 +21,13 @@ namespace University.Data
                 if (await db.Student.AnyAsync()) return;
 
                 const string passWord = "bytmig";
+                const string roleName = "Student";
+
                 var userManager = services.GetRequiredService<UserManager<Student>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+                var role = new IdentityRole<int> { Name = roleName };
+                var addRoleResult = await roleManager.CreateAsync(role);
 
                 fake = new Faker("sv");
 
@@ -32,6 +38,7 @@ namespace University.Data
                 {
                    var result =   await userManager.CreateAsync(student, passWord);
                     if (!result.Succeeded) throw new Exception(String.Join("\n", result.Errors));
+                    await userManager.AddToRoleAsync(student, roleName);
                 }
 
                 var courses = GetCourses();

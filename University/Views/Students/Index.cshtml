@@ -4,6 +4,11 @@
     ViewData["Title"] = "Index";
 }
 
+@if(User.Identity.IsAuthenticated) 
+{ 
+    <p>Is logged in</p>
+}
+
 <h1>Index</h1>
 
 <p>
@@ -37,7 +42,10 @@
                 @Html.DisplayFor(modelItem => item.AdressStreet)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                @if(User.IsInRole("Student"))
+                {
+                      <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <span>|</span>
+                }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
