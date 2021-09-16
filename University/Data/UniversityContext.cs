@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +16,14 @@ namespace University.Data
 {
     public class UniversityContext : IdentityDbContext<Student , IdentityRole<int>, int>
     {
+        private readonly IHttpContextAccessor httpContextAccessor;
+
         public DbSet<Student> Student { get; set; }
         public DbSet<University.Models.Entities.Course> Course { get; set; }
-        public UniversityContext (DbContextOptions<UniversityContext> options)
+        public UniversityContext (DbContextOptions<UniversityContext> options, IHttpContextAccessor  httpContextAccessor)
             : base(options)
         {
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,6 +37,7 @@ namespace University.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Student>().Property<DateTime>("Edited");
+            modelBuilder.Entity<Student>().Property<string>( "EditedBy");
 
             //foreach (var entity in modelBuilder.Model.GetEntityTypes())
             //{
@@ -76,6 +82,9 @@ namespace University.Data
             foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
             {
                 entry.Property("Edited").CurrentValue = DateTime.Now;
+                var userId = httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                entry.Property("EditedBy").CurrentValue = userId;
+               // entry.CurrentValues["EditedBy"] = userId;
             }
 
             return base.SaveChangesAsync(cancellationToken);

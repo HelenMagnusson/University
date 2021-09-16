@@ -10,8 +10,8 @@ using University.Data;
 namespace University.Migrations
 {
     [DbContext(typeof(UniversityContext))]
-    [Migration("20210915113944_Init")]
-    partial class Init
+    [Migration("20210916134426_IntToString")]
+    partial class IntToString
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -241,6 +241,9 @@ namespace University.Migrations
 
                     b.Property<DateTime>("Edited")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("EditedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)

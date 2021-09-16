@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bogus;
@@ -41,6 +42,7 @@ namespace University.Controllers
         {
 
             //var m = db.Student.Where(s => EF.Property<DateTime>(s, "Edited") >= DateTime.Now.AddDays(-1));
+            var m = db.Student.FirstOrDefault(s => EF.Property<string>(s, "EditedBy") == "1");
 
             //Student student = null;
             //var avatar = student.Avatar;
@@ -69,6 +71,8 @@ namespace University.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             var userId = userManager.GetUserId(User);
+
+            //var userid2 = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             if(id.ToString() != userId)
             {
@@ -143,7 +147,9 @@ namespace University.Controllers
                 return NotFound();
             }
 
-            var student = await db.Student.FindAsync(id);
+            //var student = await db.Student.FindAsync(id);
+            var student = mapper.Map<StudentEditViewModel>(await db.Student.FindAsync(id));
+
             if (student == null)
             {
                 return NotFound();
@@ -156,9 +162,9 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Avatar,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> Edit(int id, StudentEditViewModel viewModel)
         {
-            if (id != student.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -167,14 +173,19 @@ namespace University.Controllers
             {
                 try
                 {
+                    var student = await db.Users.FindAsync(id);
+                    mapper.Map(viewModel, student);
+
+                    await userManager.UpdateAsync(student);
 
                    // db.Entry(student).Property("Edited").CurrentValue = DateTime.Now;
-                    db.Update(student);
-                    await db.SaveChangesAsync();
+                   // db.Update(viewModel);
+                   // db.Entry(student).Property(s => s.Avatar).IsModified = false;
+                   // await db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!StudentExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -185,7 +196,7 @@ namespace University.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(viewModel);
         }
 
         // GET: Students/Delete/5
