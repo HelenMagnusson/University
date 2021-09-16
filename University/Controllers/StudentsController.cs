@@ -42,7 +42,7 @@ namespace University.Controllers
         {
 
             //var m = db.Student.Where(s => EF.Property<DateTime>(s, "Edited") >= DateTime.Now.AddDays(-1));
-            var m = db.Student.FirstOrDefault(s => EF.Property<string>(s, "EditedBy") == "1");
+            //var m = db.Student.FirstOrDefault(s => EF.Property<string>(s, "EditedBy") == "1");
 
             //Student student = null;
             //var avatar = student.Avatar;

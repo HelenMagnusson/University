@@ -37,7 +37,8 @@ namespace University.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Student>().Property<DateTime>("Edited");
-            modelBuilder.Entity<Student>().Property<string>( "EditedBy");
+            //modelBuilder.Entity<Student>().Property<string>( "EditedBy");
+            modelBuilder.Entity<Student>().Property(typeof(Nullable<int>), "EditedBy");
 
             //foreach (var entity in modelBuilder.Model.GetEntityTypes())
             //{
@@ -83,8 +84,8 @@ namespace University.Data
             {
                 entry.Property("Edited").CurrentValue = DateTime.Now;
                 var userId = httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                entry.Property("EditedBy").CurrentValue = userId;
-               // entry.CurrentValues["EditedBy"] = userId;
+                //entry.Property("EditedBy").CurrentValue = userId;
+               entry.CurrentValues["EditedBy"] = int.Parse(userId);
             }
 
             return base.SaveChangesAsync(cancellationToken);
