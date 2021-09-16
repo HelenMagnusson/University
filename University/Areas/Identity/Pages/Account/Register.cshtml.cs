@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,17 +25,21 @@ namespace University.Areas.Identity.Pages.Account
         private readonly UserManager<Student> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IMapper mapper;
 
         public RegisterModel(
             UserManager<Student> userManager,
             SignInManager<Student> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IMapper mapper
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            this.mapper = mapper;
         }
 
         [BindProperty]
@@ -82,7 +87,8 @@ namespace University.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new Student { UserName = Input.Email, Email = Input.Email };
+                // var user = new Student { UserName = Input.Email, Email = Input.Email };
+                var user = mapper.Map<Student>(Input);
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

@@ -151,6 +151,7 @@ namespace University.Controllers
             {
                 try
                 {
+
                    // db.Entry(student).Property("Edited").CurrentValue = DateTime.Now;
                     db.Update(student);
                     await db.SaveChangesAsync();
